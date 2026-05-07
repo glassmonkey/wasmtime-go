@@ -10,11 +10,10 @@ import (
 )
 
 // TODO: expose Component.Type() and the type-reflection hierarchy
-// (ComponentType / ComponentValType / ComponentFuncType / ...) — flagged in
-// review on #281 as the natural next slice, ahead of value handling.
-// TODO: ComponentFunc + value marshaling (call exported component functions
-// with primitive / composite WIT values). Deferred per #281 review so the
-// component-model-values design can have its own focused thread.
+// (ComponentType / ComponentValType / ComponentFuncType / ...).
+// TODO: composite WIT value types (list, record, tuple, variant, enum,
+// option, result, flags, map) and resource types — this PR covers only
+// primitive scalar and string values.
 
 // Component is a compiled WebAssembly component, the binary representation of
 // a component-model artifact. Components are instantiated through a

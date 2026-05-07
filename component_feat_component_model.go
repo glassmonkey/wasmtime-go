@@ -9,8 +9,12 @@ import (
 	"unsafe"
 )
 
-// TODO: expose Component.Type() (wasmtime_component_type) and the surrounding
-// type-reflection API once the composite WIT type representation is decided.
+// TODO: expose Component.Type() and the type-reflection hierarchy
+// (ComponentType / ComponentValType / ComponentFuncType / ...) — flagged in
+// review on #281 as the natural next slice, ahead of value handling.
+// TODO: ComponentFunc + value marshaling (call exported component functions
+// with primitive / composite WIT values). Deferred per #281 review so the
+// component-model-values design can have its own focused thread.
 
 // Component is a compiled WebAssembly component, the binary representation of
 // a component-model artifact. Components are instantiated through a
@@ -106,15 +110,6 @@ func NewComponentDeserializeFile(engine *Engine, path string) (*Component, error
 	return mkComponent(ptr), nil
 }
 
-// Clone creates a shallow clone of this component, incrementing its internal
-// reference count. The returned component is independently owned and must be
-// explicitly closed (or left to the finalizer).
-func (c *Component) Clone() *Component {
-	ptr := C.wasmtime_component_clone(c.ptr())
-	runtime.KeepAlive(c)
-	return mkComponent(ptr)
-}
-
 // GetExportIndex looks up the export named `name` in this component and
 // returns a reusable [ComponentExportIndex] handle pointing at it.
 //
@@ -189,13 +184,6 @@ func (idx *ComponentExportIndex) ptr() *C.wasmtime_component_export_index_t {
 	}
 	maybeGC()
 	return ret
-}
-
-// Clone creates a separately-owned copy of this index.
-func (idx *ComponentExportIndex) Clone() *ComponentExportIndex {
-	ptr := C.wasmtime_component_export_index_clone(idx.ptr())
-	runtime.KeepAlive(idx)
-	return mkComponentExportIndex(ptr)
 }
 
 // Close deallocates this index explicitly.

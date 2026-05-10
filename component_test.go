@@ -9,7 +9,6 @@ package wasmtime
 
 import (
 	"fmt"
-	"os"
 	"testing"
 
 	"github.com/stretchr/testify/require"
